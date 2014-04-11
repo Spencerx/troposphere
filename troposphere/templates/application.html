@@ -1,5 +1,4 @@
 {% load staticfiles %}
-{% load compressed %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +9,7 @@
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css"/>
     <!-- Compressed CSS -->
-    {% compressed_css 'application' %}
+    <link rel="stylesheet" href="{% static 'styles.min.css' %}"/>
     <!--JS-->
     <!--[if IE]>
     <script src="https://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -19,6 +18,9 @@
     var url_root = '/application';
     var static_root = '/static/';
     </script>
+    <!--<script src="{% static 'js/require.js' %}"></script>-->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
+    <script src="{% static 'js/final.all.min.js' %}"></script>
     {% if access_token and expires %}
     <script type="text/javascript">
     var access_token = "{{ access_token }}";
@@ -26,9 +28,8 @@
     </script>
     {% endif %}
     <!-- Application dependencies -->
-    <script data-main="{% static 'js/main.js' %}" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+
     <!-- Google Analtics -->
-    <script src="{% static 'js/analytics.js' %}"></script>
 </head>
 <body>
 
