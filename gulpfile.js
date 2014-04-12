@@ -26,7 +26,7 @@ gulp.task('styles', function(){
   return gulp.src(paths.css)
     .pipe(concat('styles.min.css'))
     .pipe(minifycss())
-    .pipe(gulp.dest('troposphere/assets'))
+    .pipe(gulp.dest('troposphere/assets/css'))
     .pipe(notify({ message: 'Styles task complete' }));
 
 });
@@ -89,5 +89,5 @@ gulp.task('clean', function() {
 });
 
 gulp.task('default', ['clean'], function(){
-  gulp.start('styles','scripts');
+  gulp.start('styles','requirejsBuild','scripts', 'images');
 });
