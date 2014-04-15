@@ -1,13 +1,16 @@
 define(['react', 'components/header', 'components/sidebar',
 'components/footer', 'components/notifications', 'components/modal',
 'router', 'controllers/profile', 'components/settings', 'components/projects',
-'components/images/list', 'components/images/favorites', 'components/images/detail',
-'singletons/providers', 'components/providers', 'components/help', 'components/instance_detail', 'components/volume_detail'], function
-(React, Header, Sidebar, Footer, Notifications, Modal,
-Router, Profile, Settings, Projects, ImageList, ImageFavorites, ImageDetail,
-providers, Providers, Help, InstanceDetail, VolumeDetail) {
+'components/applications/list', 'components/applications/favorites',
+'components/applications/detail', 'singletons/providers', 'components/providers',
+'components/help', 'components/instance_detail', 'components/volume_detail',
+'components/applications/search_results'],
+function (React, Header, Sidebar, Footer, Notifications, Modal, Router,
+Profile, Settings, Projects, ApplicationList, ApplicationFavorites,
+ApplicationDetail, providers, Providers, Help, InstanceDetail, VolumeDetail,
+ApplicationSearchResults) {
 
-    var Application = React.createClass({
+    var Root = React.createClass({
         getInitialState: function() {
             return {
                 loggedIn: this.props.session.isValid(),
@@ -20,7 +23,7 @@ providers, Providers, Help, InstanceDetail, VolumeDetail) {
         },
         handleRoute: function(page, args) {
             this.setState({route: page, routeArgs: args});
-            if (page === 'imageDetail') {
+            if (page === 'appDetail') {
                 Profile.getIdentities().then(function(identities) {
                     this.setState({'identities': identities});
                 }.bind(this));
@@ -56,11 +59,26 @@ providers, Providers, Help, InstanceDetail, VolumeDetail) {
             this.router.navigate(route, options);
         },
         pages: {
-            settings: function() {
-                return Settings({profile: this.state.profile});
-            },
             projects: function() {
                 return Projects();
+            },
+            images: function() {
+                return ApplicationList();
+            },
+            appFavorites: function() {
+                return ApplicationFavorites();
+            },
+            appDetail: function(appId) {
+                return ApplicationDetail({
+                    applicationId: appId,
+                    profile: this.state.profile,
+                    identities: this.state.identities
+                });
+            },
+            appSearch: function(query) {
+                return ApplicationSearchResults({
+                    query: query,
+                });
             },
             instanceDetail: function(providerId, identityId, instanceId) {
                 return InstanceDetail({
@@ -76,22 +94,12 @@ providers, Providers, Help, InstanceDetail, VolumeDetail) {
                     volumeId: volumeId
                 });
             },
-            images: function() {
-                return ImageList();
-            },
-            imageFavorites: function() {
-                return ImageFavorites();
-            },
-            imageDetail: function(imageId) {
-                return ImageDetail({
-                    image_id: imageId,
-                    profile: this.state.profile, 
-                    identities: this.state.identities
-                });
-            },
             providers: function() {
                 // TODO: Get providers lazily
                 return Providers({providers: this.state.providers});
+            },
+            settings: function() {
+                return Settings({profile: this.state.profile});
             },
             help: function() {
                 return Help();
@@ -115,5 +123,5 @@ providers, Providers, Help, InstanceDetail, VolumeDetail) {
         }
     });
 
-    return Application;
+    return Root;
 });

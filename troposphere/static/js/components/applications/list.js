@@ -1,6 +1,6 @@
 define(['react', 'components/page_header', 'collections/applications', 
-    'components/images/cards', 'components/images/search'],
-    function(React, PageHeader, Applications, Cards, ImageSearch) {
+    'components/applications/cards', 'components/applications/search'],
+    function(React, PageHeader, Applications, Cards, ApplicationSearch) {
 
     var ApplicationsHome = React.createClass({
         getInitialState: function() {
@@ -23,7 +23,7 @@ define(['react', 'components/page_header', 'collections/applications',
 
             return React.DOM.div({},
                 PageHeader({title: 'Images', helpText: this.helpText}),
-                ImageSearch(),
+                ApplicationSearch(),
                 content);
         },
         updateApplications: function(apps) {
@@ -33,6 +33,7 @@ define(['react', 'components/page_header', 'collections/applications',
         componentDidMount: function() {
             var apps = new Applications();
             apps.on('sync', this.updateApplications);
+            apps.on('change', this.forceUpdate.bind(this, null));
             apps.fetch();
         },
         componentWillUnmount: function() {

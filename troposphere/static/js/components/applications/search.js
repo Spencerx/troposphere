@@ -1,16 +1,27 @@
-define(['react'], function(React) {
+define(['react', 'backbone'], function(React, Backbone) {
 
     var AdvancedOptions = React.createClass({
         render: function() {
-            return React.DOM.div({style: {display: this.props.visible ? "block" : "none"}}, "Advanced stuff, here, man");
+            var display = this.props.visible ? "block" : "none";
+            return React.DOM.div({style: {display: display}},
+                "Advanced stuff, here, man");
         }
     });
     
     var SearchContainer = React.createClass({
+        getDefaultProps: function() {
+            return {query: ""};
+        },
         getInitialState: function() {
             return {
                 showAdvancedOptions: false,
-                query: ""
+                query: this.props.query
+            }
+        },
+        statics: {
+            handleSearch: function(query) {
+                var queryUrl = "images/search/" + encodeURIComponent(query);
+                Backbone.history.navigate(queryUrl, {trigger: true});
             }
         },
         toggleAdvancedOptions: function(e) {
@@ -20,6 +31,10 @@ define(['react'], function(React) {
         handleChange: function(e) {
             this.setState({query: e.target.value});
         },
+        handleKeyUp: function(e) {
+            if (e.keyCode == 13 && this.state.query.length)
+                SearchContainer.handleSearch(this.state.query);
+        },
         render: function() {
             return React.DOM.div({},
                 React.DOM.input({
@@ -27,7 +42,8 @@ define(['react'], function(React) {
                     className: 'form-control',
                     placeholder: 'Search by Image Name, Tag, OS, and more',
                     onChange: this.handleChange,
-                    value: this.state.query
+                    value: this.state.query,
+                    onKeyUp: this.handleKeyUp,
                 }),
                 React.DOM.a({
                     onClick: this.toggleAdvancedOptions,
