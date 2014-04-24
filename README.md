@@ -13,7 +13,7 @@ Edit `local.py` with your own settings. You'll have to generate a new
 keypair from Groupy for the Troposphere application. The configuration
 variable `OAUTH_PRIVATE_KEY_PATH` should refer to the absolute path of that key.
 
-### Node.js Stuff
+### Building static assets
 
 Troposophere requires Gulp for building static assets. Gulp requires a [recent
 Node.js installation][1]. Then install gulp globally. And other dependencies locally:
@@ -22,6 +22,21 @@ Node.js installation][1]. Then install gulp globally. And other dependencies loc
 npm install -g gulp
 npm install
 ```
+
+
+Then, the build static assets, use
+
+```
+gulp
+```
+
+If you're developing, you'll want to automatically rebuild assets with watch:
+
+```
+gulp watch
+```
+
+When you modify anything in the `static` directory, everything will be rebuilt appropriately.
 
 ### Virtualenv
 

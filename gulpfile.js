@@ -110,6 +110,14 @@ gulp.task('clean', function() {
     .pipe(clean({force: true}));
 });
 
+// Watch
+gulp.task('watch', function() {
+  gulp.watch('troposphere/static/css/**', ['styles']);
+  gulp.watch('troposphere/static/js/**', ['requirejsBuild']);
+  gulp.watch('troposphere/static/images/**', ['images']);
+
+});
+
 gulp.task('default', ['clean'], function(){
   gulp.start('styles','requirejsBuild','scripts', 'images');
 });
