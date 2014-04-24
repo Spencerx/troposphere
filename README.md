@@ -13,10 +13,14 @@ Edit `local.py` with your own settings. You'll have to generate a new
 keypair from Groupy for the Troposphere application. The configuration
 variable `OAUTH_PRIVATE_KEY_PATH` should refer to the absolute path of that key.
 
-Install yuglify with npm locally (cd into the directory where you cloned this repo)
+### Node.js Stuff
 
-```bash
-npm install yuglify
+Troposophere requires Gulp for building static assets. Gulp requires a [recent
+Node.js installation][1]. Then install gulp globally. And other dependencies locally:
+
+```
+npm install -g gulp
+npm install
 ```
 
 ### Virtualenv
@@ -26,7 +30,6 @@ mkdir -p /opt/env
 virtualenv /opt/env/troposphere
 source /opt/env/troposphere/bin/activate
 pip install -r requirements.txt
-python manage.py collectstatic
 ```
 
 
@@ -50,3 +53,5 @@ service apache2 reload
 ```
 
 Troposphere should then be running on port `5000`.
+
+[1]: https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager#ubuntu-mint-elementary-os
