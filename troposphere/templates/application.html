@@ -20,7 +20,8 @@
     </script>
     <!--<script src="{% static 'js/require.js' %}"></script>-->
     <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
-    <script src="{% static 'js/final.all.min.js' %}"></script>
+    <script src="{% static 'js/analytics.js' %}"></script>
+    <script src="{% static 'js/app-require.min.js' %}"></script>
     {% if access_token and expires %}
     <script type="text/javascript">
     var access_token = "{{ access_token }}";

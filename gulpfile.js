@@ -55,19 +55,19 @@ gulp.task('styles', ['app_styles', 'login_styles', 'no_user_styles']);
 
 // Scripts
 gulp.task('scripts', ['requirejsBuild'], function(){
-  return gulp.src(paths.scripts)
-    .pipe(concat('all.min.js'))
+  return gulp.src(['troposphere/static/js/analytics.js'])
     .pipe(uglify())
     .pipe(gulp.dest('troposphere/assets/js'))
     .pipe(notify({ message: 'Scripts task complete' }));
 });
+
 
 // RequireJS
 gulp.task('requirejsBuild', function() {
   rjs({
         //appDir: 'troposphere/assets/js',
         baseUrl: 'troposphere/static/js',
-        out: 'final.all.min.js',
+        out: 'app-require.min.js',
         shim: {
             backbone: {
                 deps: ['underscore', 'jquery'],
@@ -119,5 +119,5 @@ gulp.task('watch', function() {
 });
 
 gulp.task('default', ['clean'], function(){
-  gulp.start('styles','requirejsBuild','scripts', 'images');
+  gulp.start('styles','scripts', 'images');
 });
