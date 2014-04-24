@@ -28,28 +28,17 @@ LaunchModal) {
             return {application: null};
         },
         componentDidMount: function() {
-            // TODO: This is what should happen if we have API support for it
-            /*
-            var app = new App({id: this.props.image_id});
+            var app = new App({id: this.props.applicationId});
             app.fetch({success: function(model) {
-                this.setState({image: model});
-            }.bind(this)});
-            */
-            // This is terrible.
-            var apps = new AppCollection();
-            apps.fetch({success: function(collection) {
-                var app = collection.get(this.props.applicationId);
-                this.setState({application: app});
+                this.setState({application: model});
             }.bind(this)});
         },
         showModal: function(e) {
-            Modal.events.trigger('alert', function(onClose) {
-                return LaunchModal({
-                    onClose: onClose,
-                    application: this.state.application,
-                    identities: this.props.identities
-                });
-            }.bind(this));
+            Modal.show(LaunchModal({
+                application: this.state.application,
+                identities: this.props.identities,
+                providers: this.props.providers
+            }));
         },
         render: function() {
             var app = this.state.application;
@@ -58,11 +47,17 @@ LaunchModal) {
                 return React.DOM.div({className: 'loading'});
 
             return React.DOM.div({id: 'app-detail'},
+                React.DOM.a({className: 'nav-back btn btn-default'}, React.DOM.span({className: 'glyphicon glyphicon-arrow-left'}, '')),
                 React.DOM.h1({}, app.get('name_or_id')),
-                Cards.Rating({rating: app.get('rating')}),
+                React.DOM.h2({className: 'tag-title'}, 'Image Tags'),
+                React.DOM.a({href: '#'}, 'Suggest a Tag'),
+                Cards.Tags({ tags: app.get('tags') }),
+                React.DOM.hr({}),
+                //Cards.Rating({rating: app.get('rating')}),
                 Cards.ApplicationCard({application: app, onLaunch: this.showModal}),
                 React.DOM.h2({}, "Description"),
                 React.DOM.p({}, app.get('description')),
+                React.DOM.hr({}),
                 React.DOM.h2({}, "Versions of this Image"),
                 MachineList({machines: app.get('machines')}))
         }

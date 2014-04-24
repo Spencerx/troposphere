@@ -1,24 +1,16 @@
-define(['react', 'singletons/providers', 'collections/sizes',
+define(['react', 'collections/sizes',
 'components/mixins/modal', 'controllers/providers', 'controllers/instances'],
-function(React, providers, Sizes, ModalMixin, ProviderController, Instances) {
+function(React, Sizes, ModalMixin, ProviderController, Instances) {
 
 
     var InstanceSizeOption = React.createClass({
         canLaunch: function(size) {
             return size.get('remaining') > 0;
         },
-        renderOptionText: function() {
-            var size = this.props.size;
-            var memoryMB = size.get('mem') / 1024;
-            return [size.get('name'), " (",
-                size.get('cpu'), " CPUs, ",
-                memoryMB, " GB memory, ",
-                size.get('disk'), " GB disk)"];
-        },
         render: function() {
             return React.DOM.option({
                 value: this.props.size.id
-            }, this.renderOptionText());
+            }, this.props.size.formattedDetails());
         }
     });
 
@@ -38,12 +30,14 @@ function(React, providers, Sizes, ModalMixin, ProviderController, Instances) {
     });
 
     var IdentitySelect = React.createClass({
+        renderOption: function(identity) {
+            var provider_name = this.props.providers
+                .get(identity.get('provider_id')).get('name');
+            return React.DOM.option({value: identity.id},
+                "Identity " + identity.id + " on " + provider_name);
+        },
         render: function() {
-            var options = this.props.identities.map(function(identity) {
-                var provider_name = providers.get(identity.get('provider_id')).get('name');
-                return React.DOM.option({value: identity.id},
-                    "Identity " + identity.id + " on " + provider_name);
-            });
+            var options = this.props.identities.map(this.renderOption);
             return React.DOM.select({
                 value: this.props.identityId,
                 id: 'identity',
@@ -130,7 +124,8 @@ function(React, providers, Sizes, ModalMixin, ProviderController, Instances) {
                     IdentitySelect({
                         onChange: this.handleIdentityChange,
                         identityId: this.state.identityId,
-                        identities: this.props.identities})),
+                        identities: this.props.identities,
+                        providers: this.props.providers})),
                 React.DOM.div({className: 'form-group'},
                     React.DOM.label({htmlFor: 'size'}, "Instance Size"),
                     InstanceSizeSelect({

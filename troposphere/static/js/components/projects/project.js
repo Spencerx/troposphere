@@ -1,7 +1,4 @@
-define(['backbone', 'react', 'underscore', 'components/page_header',
-'components/intro', 'collections/projects',
-'components/common/time', 'rsvp', 'components/mixins/loading'], function(Backbone, React, _,
-PageHeader, Intro, ProjectCollection, Time, RSVP, LoadingMixin) {
+define(['react', 'components/common/time'], function(React, Time) {
 
     var ProjectItemMixin = {
         render: function() {
@@ -34,7 +31,8 @@ PageHeader, Intro, ProjectCollection, Time, RSVP, LoadingMixin) {
         renderDetails: function() {
             var machine_name = this.props.model.get('machine_name') ||
                 this.props.model.get('machine_alias');
-            return [this.props.model.get('ip_address') + ', from ',
+            var ip = this.props.model.get('public_ip_address');
+            return [ip ? ip + ', ' : '',  'from ',
                 React.DOM.a({}, machine_name)];
         }
     });
@@ -85,50 +83,12 @@ PageHeader, Intro, ProjectCollection, Time, RSVP, LoadingMixin) {
         render: function() {
             var project = this.props.project;
             console.log(project);
-            return React.DOM.li({}, React.DOM.h2({}, project.get('name')), 
-                React.DOM.div({className: 'project-description'}, React.DOM.p({}, project.get('description'))),
+            return React.DOM.li({}, React.DOM.h2({}, project.get('name')), React.DOM.a({href: '#', className: 'btn btn-primary update-project-btn'}, '+'),
+                React.DOM.div({className: 'project-description'}, React.DOM.p({}, project.get('description')), React.DOM.a({href: '#'}, 'Edit Description')),
                 ProjectItems({project: project}));
         }
     });
 
-    var ProjectsList = React.createClass({
-        render: function() {
-            var items = this.props.projects.map(function(model) {
-                return Project({key: model.id, project: model});
-            });
-            return React.DOM.ul({id: 'project-list'}, items);
-        }
-    });
+    return Project;
 
-    var Projects = React.createClass({
-        helpText: function() {
-            return React.DOM.p({}, "Projects help you organize your cloud resources");
-        },
-        render: function() {
-            var content = ProjectsList({projects: this.props.projects});
-
-            return React.DOM.div({},
-                PageHeader({title: "Projects", helpText: this.helpText}),
-                content
-            );
-        }
-    });
-
-    var ProjectsView = React.createClass({
-        mixins: [LoadingMixin],
-        model: function() {
-            return new RSVP.Promise(function(resolve, reject) {
-                new ProjectCollection().fetch({
-                    success: function(coll) {
-                        resolve(coll);
-                    }
-                });
-            });
-        },
-        renderContent: function() {
-            return Projects({projects: this.state.model});
-        }
-    });
-
-    return ProjectsView;
 });

@@ -1,14 +1,15 @@
 define(['react', 'components/header', 'components/sidebar',
-'components/footer', 'components/notifications', 'components/modal',
-'router', 'controllers/profile', 'components/settings', 'components/projects',
+'components/footer', 'components/notifications', 'router',
+'controllers/profile', 'components/settings', 'components/projects/list',
 'components/applications/list', 'components/applications/favorites',
-'components/applications/detail', 'singletons/providers', 'components/providers',
-'components/help', 'components/instance_detail', 'components/volume_detail',
-'components/applications/search_results'],
-function (React, Header, Sidebar, Footer, Notifications, Modal, Router,
+'components/applications/detail', 'controllers/providers',
+'components/providers', 'components/help',
+'components/instance_detail', 'components/volume_detail',
+'components/applications/search_results'], 
+function (React, Header, Sidebar, Footer, Notifications, Router,
 Profile, Settings, Projects, ApplicationList, ApplicationFavorites,
-ApplicationDetail, providers, Providers, Help, InstanceDetail, VolumeDetail,
-ApplicationSearchResults) {
+ApplicationDetail, ProviderController, Providers, Help, InstanceDetail,
+VolumeDetail, ApplicationSearchResults) {
 
     var Root = React.createClass({
         getInitialState: function() {
@@ -17,7 +18,7 @@ ApplicationSearchResults) {
                 profile: null,
                 route: null,
                 routeArgs: [],
-                providers: providers,
+                providers: null,
                 identities: null
             };
         },
@@ -51,9 +52,22 @@ ApplicationSearchResults) {
                 }.bind(this));
             }.bind(this));
         },
+        fetchProviders: function() {
+            // TODO: fetch providers only on demand in stead of at mount
+            ProviderController.getProviders().then(function(providers) {
+                this.setState({providers: providers});
+
+                providers.on('change', function(m) {
+                    this.setState({providers: providers});
+                }.bind(this));
+            }.bind(this));
+        },
         componentDidMount: function() {
             this.beginRouting();
-            this.fetchProfile();
+            if (this.props.session.isValid()) {
+                this.fetchProfile();
+                this.fetchProviders();
+            }
         },
         handleNavigate: function(route, options) {
             this.router.navigate(route, options);
@@ -72,7 +86,8 @@ ApplicationSearchResults) {
                 return ApplicationDetail({
                     applicationId: appId,
                     profile: this.state.profile,
-                    identities: this.state.identities
+                    identities: this.state.identities,
+                    providers: this.state.providers
                 });
             },
             appSearch: function(query) {
@@ -84,14 +99,16 @@ ApplicationSearchResults) {
                 return InstanceDetail({
                     providerId: providerId,
                     identityId: identityId,
-                    instanceId: instanceId
+                    instanceId: instanceId,
+                    providers: this.state.providers
                 });
             },
             volumeDetail: function(providerId, identityId, volumeId) {
                 return VolumeDetail({
                     providerId: providerId,
                     identityId: identityId,
-                    volumeId: volumeId
+                    volumeId: volumeId,
+                    providers: this.state.providers
                 });
             },
             providers: function() {
@@ -118,8 +135,7 @@ ApplicationSearchResults) {
                     onNavigate: this.handleNavigate}),
                 Notifications(),
                 React.DOM.div({id: 'main'}, this.renderContent()),
-                Footer(),
-                Modal());
+                Footer());
         }
     });
 
