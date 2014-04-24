@@ -11,25 +11,47 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     notify = require('gulp-notify'),
     cache = require('gulp-cache'),
-    livereload = require('gulp-livereload'),
-    lr = require('tiny-lr'),
-    server = lr();
+    livereload = require('gulp-livereload');
 
 var paths = {
-  css:['troposphere/static/css/*.css'],
+  css: {
+    app: 'troposphere/static/css/app/*.css',
+    login: 'troposphere/static/css/login/*.css',
+    no_user: 'troposphere/static/css/no_user/*.css'
+  },
   scripts: ['troposphere/static/js/**'],
   images: ['troposphere/static/images/**'],
 };
 
 // Styles
-gulp.task('styles', function(){
-  return gulp.src(paths.css)
-    .pipe(concat('styles.min.css'))
+gulp.task('app_styles', function(){
+  return gulp.src(paths.css.app)
+    .pipe(concat('app.min.css'))
     .pipe(minifycss())
     .pipe(gulp.dest('troposphere/assets/css'))
     .pipe(notify({ message: 'Styles task complete' }));
 
 });
+
+gulp.task('no_user_styles', function(){
+  return gulp.src(paths.css.no_user)
+    .pipe(concat('no_user.min.css'))
+    .pipe(minifycss())
+    .pipe(gulp.dest('troposphere/assets/css'))
+    .pipe(notify({ message: 'Styles task complete' }));
+
+});
+
+gulp.task('login_styles', function(){
+  return gulp.src(paths.css.login)
+    .pipe(concat('login.min.css'))
+    .pipe(minifycss())
+    .pipe(gulp.dest('troposphere/assets/css'))
+    .pipe(notify({ message: 'Styles task complete' }));
+
+});
+
+gulp.task('styles', ['app_styles', 'login_styles', 'no_user_styles']);
 
 // Scripts
 gulp.task('scripts', ['requirejsBuild'], function(){
